@@ -1,57 +1,57 @@
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 
-@entity
+@Entity(tableName: "quran")
 class QuranEntity extends Equatable {
-  @PrimaryKey(autoGenerate: true)
-  int? id;
+  @PrimaryKey()
+  final int? id;
 
   @ColumnInfo(name: "sora_number")
-  int? surahNumber;
+  final int? surahNumber;
 
   @ColumnInfo(name: "jozz")
-  int? juzNumber;
+  final int? juzNumber;
 
   @ColumnInfo(name: "page")
-  int? pageNumber;
+  final int? pageNumber;
 
   @ColumnInfo(name: "sora_name_en")
-  String? surahNameEn;
+  final String? surahNameEn;
 
   @ColumnInfo(name: "sora_name_ar")
-  String? surahNameAr;
+  final String? surahNameAr;
 
   @ColumnInfo(name: "aya_no")
-  int? ayahNumber;
+  final int? ayahNumber;
 
   @ColumnInfo(name: "aya_text")
-  String? ayahText;
+  final String? ayahText;
 
   @ColumnInfo(name: "aya_text_emlaey")
-  String? ayahSearchText;
+  final String? ayahSearchText;
 
   @ColumnInfo(name: "translation_id")
-  String? translationTextId;
+  final String? translationTextId;
 
   @ColumnInfo(name: "translation_en")
-  String? translationTextEn;
+  final String? translationTextEn;
 
   @ColumnInfo(name: "footnotes_id")
-  String? footnotesTextId;
+  final String? footnotesTextId;
 
   @ColumnInfo(name: "sora_name_id")
-  String? surahNameId;
+  final String? surahNameId;
 
   @ColumnInfo(name: "sora_descend_place")
-  String? surahDescendText;
+  final String? surahDescendText;
 
   @ColumnInfo(name: "sora_name_emlaey")
-  String? surahNameSearchText;
+  final String? surahNameSearchText;
 
   @ColumnInfo(name: "footnotes_en")
-  String? footnotesTextEn;
+  final String? footnotesTextEn;
 
-  QuranEntity({
+  const QuranEntity({
     this.id,
     this.surahNumber,
     this.juzNumber,
@@ -71,24 +71,22 @@ class QuranEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props {
-    return [
-      id,
-      surahNumber,
-      juzNumber,
-      pageNumber,
-      surahNameEn,
-      surahNameAr,
-      ayahNumber,
-      ayahText,
-      ayahSearchText,
-      translationTextId,
-      translationTextEn,
-      footnotesTextId,
-      surahNameId,
-      surahDescendText,
-      surahNameSearchText,
-      footnotesTextEn,
-    ];
-  }
+  List<Object?> get props => [
+        id,
+        surahNumber,
+        juzNumber,
+        pageNumber,
+        surahNameEn,
+        surahNameAr,
+        ayahNumber,
+        ayahText,
+        ayahSearchText,
+        translationTextId,
+        translationTextEn,
+        footnotesTextId,
+        surahNameId,
+        surahDescendText,
+        surahNameSearchText,
+        footnotesTextEn,
+      ];
 }

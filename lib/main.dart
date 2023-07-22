@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_qoran/injection_container.dart';
+import 'package:my_qoran/di/injection_container.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
