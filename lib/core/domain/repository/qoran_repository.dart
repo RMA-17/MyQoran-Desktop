@@ -30,7 +30,7 @@ abstract class QuranRepository {
     String query,
   );
 
-  Future<DataState<List<AyahSearchResult>>> getQuranSearchResult(String query);
+  Future<DataState<List<AyahSearchResult>>> getAyahSearchResult(String query);
 
   Future<DataState<List<SurahRead>>> getQuranBySurahText(int surahNumber);
 

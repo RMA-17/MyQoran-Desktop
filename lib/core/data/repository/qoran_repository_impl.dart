@@ -193,7 +193,7 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<AyahSearchResult>>> getQuranSearchResult(
+  Future<DataState<List<AyahSearchResult>>> getAyahSearchResult(
     String query,
   ) async {
     try {
