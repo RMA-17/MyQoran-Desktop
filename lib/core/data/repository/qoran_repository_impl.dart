@@ -1,11 +1,17 @@
 import 'package:flutter/foundation.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/juz_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/page_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/quran_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/search_result_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/surah_entity.dart';
 import 'package:my_qoran/core/data/data_source/local/local_datasource.dart';
 import 'package:my_qoran/core/data/states/data_state.dart';
+import 'package:my_qoran/core/domain/model/index/juz_index_model.dart';
+import 'package:my_qoran/core/domain/model/index/page_index_model.dart';
+import 'package:my_qoran/core/domain/model/index/surah_index_model.dart';
+import 'package:my_qoran/core/domain/model/listing/juz_listing.dart';
+import 'package:my_qoran/core/domain/model/listing/page_listing.dart';
+import 'package:my_qoran/core/domain/model/listing/surah_listing.dart';
+import 'package:my_qoran/core/domain/model/read/juz_read_model.dart';
+import 'package:my_qoran/core/domain/model/read/page_read_model.dart';
+import 'package:my_qoran/core/domain/model/read/surah_read_model.dart';
+import 'package:my_qoran/core/domain/model/search/search_ayah_model.dart';
+import 'package:my_qoran/core/domain/model/search/search_surah_model.dart';
 import 'package:my_qoran/core/domain/repository/qoran_repository.dart';
 
 class QuranRepositoryImpl implements QuranRepository {
@@ -13,9 +19,16 @@ class QuranRepositoryImpl implements QuranRepository {
   QuranRepositoryImpl(this._localDataSource);
 
   @override
-  Future<DataState<List<JuzView>>> getJuzIndex() async {
+  Future<DataState<List<JuzIndex>>> getJuzIndex() async {
     try {
-      final data = await _localDataSource.getJuzIndex();
+      final dataList = await _localDataSource.getJuzIndex();
+      final data = dataList
+          .map((item) => JuzIndex(
+                ayahNumber: item.ayahNumber,
+                id: item.id,
+                juzNumber: item.juzNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -26,9 +39,15 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<QuranEntity>>> getJuzList() async {
+  Future<DataState<List<JuzListing>>> getJuzList() async {
     try {
-      final data = await _localDataSource.getJuzList();
+      final dataList = await _localDataSource.getJuzList();
+      final data = dataList
+          .map((item) => JuzListing(
+                id: item.id,
+                juzNumber: item.juzNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -39,9 +58,15 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<PageView>>> getPageIndex() async {
+  Future<DataState<List<PageIndex>>> getPageIndex() async {
     try {
-      final data = await _localDataSource.getPageIndex();
+      final dataList = await _localDataSource.getPageIndex();
+      final data = dataList
+          .map((item) => PageIndex(
+                id: item.id,
+                pageNumber: item.pageNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -52,9 +77,15 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<QuranEntity>>> getPageList() async {
+  Future<DataState<List<PageListing>>> getPageList() async {
     try {
-      final data = await _localDataSource.getPageList();
+      final dataList = await _localDataSource.getPageList();
+      final data = dataList
+          .map((item) => PageListing(
+                id: item.id,
+                pageNumber: item.pageNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -65,9 +96,27 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<QuranEntity>>> getQuranByJuzText(int juzNumber) async {
+  Future<DataState<List<JuzRead>>> getQuranByJuzText(int juzNumber) async {
     try {
-      final data = await _localDataSource.getQuranByJuzText(juzNumber);
+      final dataList = await _localDataSource.getQuranByJuzText(juzNumber);
+      final data = dataList
+          .map((item) => JuzRead(
+                id: item.id,
+                ayahNumber: item.ayahNumber,
+                ayahSearchText: item.ayahSearchText,
+                ayahText: item.ayahText,
+                footnotesEn: item.footnotesTextEn,
+                footnotesId: item.footnotesTextId,
+                juzNumber: item.juzNumber,
+                surahDescendPlace: item.surahDescendText,
+                surahNameAr: item.surahNameAr,
+                surahNameEn: item.surahNameEn,
+                surahNameId: item.surahNameId,
+                surahNumber: item.surahNumber,
+                translationTextEn: item.translationTextEn,
+                translationTextId: item.translationTextId,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -78,11 +127,30 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<QuranEntity>>> getQuranByPageText(
+  Future<DataState<List<PageRead>>> getQuranByPageText(
     int pageNumber,
   ) async {
     try {
-      final data = await _localDataSource.getQuranByPageText(pageNumber);
+      final dataList = await _localDataSource.getQuranByPageText(pageNumber);
+      final data = dataList
+          .map((item) => PageRead(
+                id: item.id,
+                ayahNumber: item.ayahNumber,
+                ayahSearchText: item.ayahSearchText,
+                ayahText: item.ayahText,
+                footnotesEn: item.footnotesTextEn,
+                footnotesId: item.footnotesTextId,
+                juzNumber: item.juzNumber,
+                surahDescendPlace: item.surahDescendText,
+                surahNameAr: item.surahNameAr,
+                surahNameEn: item.surahNameEn,
+                surahNameId: item.surahNameId,
+                surahNumber: item.surahNumber,
+                translationTextEn: item.translationTextEn,
+                translationTextId: item.translationTextId,
+                pageNumber: item.pageNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -93,11 +161,28 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<QuranEntity>>> getQuranBySurahText(
+  Future<DataState<List<SurahRead>>> getQuranBySurahText(
     int surahNumber,
   ) async {
     try {
-      final data = await _localDataSource.getQuranBySurahText(surahNumber);
+      final dataList = await _localDataSource.getQuranBySurahText(surahNumber);
+      final data = dataList
+          .map((item) => SurahRead(
+                id: item.id,
+                ayahNumber: item.ayahNumber,
+                ayahSearchText: item.ayahSearchText,
+                ayahText: item.ayahText,
+                footnotesEn: item.footnotesTextEn,
+                footnotesId: item.footnotesTextId,
+                surahDescendPlace: item.surahDescendText,
+                surahNameAr: item.surahNameAr,
+                surahNameEn: item.surahNameEn,
+                surahNameId: item.surahNameId,
+                surahNumber: item.surahNumber,
+                translationTextEn: item.translationTextEn,
+                translationTextId: item.translationTextId,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -108,11 +193,22 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<QuranEntity>>> getQuranSearchResult(
+  Future<DataState<List<AyahSearchResult>>> getQuranSearchResult(
     String query,
   ) async {
     try {
-      final data = await _localDataSource.getQuranSearchResult(query);
+      final dataList = await _localDataSource.getQuranSearchResult(query);
+      final data = dataList
+          .map((item) => AyahSearchResult(
+                ayahNumber: item.ayahNumber,
+                ayahText: item.ayahText,
+                id: item.id,
+                surahName: item.surahNameEn,
+                surahNumber: item.surahNumber,
+                translationEn: item.translationTextEn,
+                translationId: item.translationTextId,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -123,9 +219,20 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<SurahView>>> getSurahIndex() async {
+  Future<DataState<List<SurahIndex>>> getSurahIndex() async {
     try {
-      final data = await _localDataSource.getSurahIndex();
+      final dataList = await _localDataSource.getSurahIndex();
+      final data = dataList
+          .map((item) => SurahIndex(
+                id: item.id,
+                ayahTotal: item.ayahTotal,
+                surahDescendText: item.surahDescendText,
+                surahNameAr: item.surahNameAr,
+                surahNameEN: item.surahNameEN,
+                surahNameID: item.surahNameID,
+                surahNumber: item.surahNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -136,9 +243,16 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<QuranEntity>>> getSurahList() async {
+  Future<DataState<List<SurahListing>>> getSurahList() async {
     try {
-      final data = await _localDataSource.getSurahList();
+      final dataList = await _localDataSource.getSurahList();
+      final data = dataList
+          .map((item) => SurahListing(
+                id: item.id,
+                surahName: item.surahNameEn,
+                surahNumber: item.surahNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {
@@ -149,11 +263,23 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<DataState<List<SearchSurahResultView>>> getSurahSearchResult(
+  Future<DataState<List<SurahSearchResult>>> getSurahSearchResult(
     String query,
   ) async {
     try {
-      final data = await _localDataSource.getSurahSearchResult(query);
+      final dataList = await _localDataSource.getSurahSearchResult(query);
+      final data = dataList
+          .map((item) => SurahSearchResult(
+                id: item.id,
+                ayahTotal: item.numberOfAyah,
+                searchableSurahName: item.surahNameEmlaey,
+                surahDescendPlace: item.turunSurah,
+                surahNameAr: item.surahNameAr,
+                surahNameEn: item.surahNameEn,
+                surahNameId: item.surahNameId,
+                surahNumber: item.surahNumber,
+              ))
+          .toList();
       return DataSuccess(data);
     } catch (e) {
       if (kDebugMode) {

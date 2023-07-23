@@ -27,11 +27,13 @@ abstract class QuranDao {
   Future<List<QuranEntity>> getPageList();
 
   @Query(
-      "SELECT * FROM search_surah_result WHERE sora_name_emlaey LIKE '%'||:search||'%' OR sora = '%'||:search||'%' GROUP BY sora")
+    "SELECT * FROM search_surah_result WHERE sora_name_emlaey LIKE '%'||:search||'%' OR sora = '%'||:search||'%' GROUP BY sora",
+  )
   Future<List<SearchSurahResultView>> searchSurah(String search);
 
   @Query(
-      "SELECT * FROM quran WHERE translation_id LIKE '%'||:search||'%' OR aya_text_emlaey LIKE :search OR translation_en LIKE '%'||:search||'%'")
+    "SELECT * FROM quran WHERE translation_id LIKE '%'||:search||'%' OR aya_text_emlaey LIKE :search OR translation_en LIKE '%'||:search||'%'",
+  )
   Future<List<QuranEntity>> searchEntireQuran(String search);
 
   @Query(

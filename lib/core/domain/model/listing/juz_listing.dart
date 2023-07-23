@@ -1,10 +1,8 @@
-class JuzIndex {
-  final int? ayahNumber;
+class JuzListing {
   final int? id;
   final int? juzNumber;
 
-  const JuzIndex({
-    this.ayahNumber,
+  const JuzListing({
     this.id,
     this.juzNumber,
   });

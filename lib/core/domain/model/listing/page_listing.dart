@@ -1,8 +1,8 @@
-class PageIndex {
+class PageListing {
   final int? id;
   final int? pageNumber;
 
-  const PageIndex({
+  const PageListing({
     this.id,
     this.pageNumber,
   });
