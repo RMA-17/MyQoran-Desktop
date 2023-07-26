@@ -1,5 +1,3 @@
-import 'package:my_qoran/core/data/data_source/local/entities/quran_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/search_result_entity.dart';
 import 'package:my_qoran/core/data/states/data_state.dart';
 import 'package:my_qoran/core/domain/model/index/juz_index_model.dart';
 import 'package:my_qoran/core/domain/model/index/page_index_model.dart';

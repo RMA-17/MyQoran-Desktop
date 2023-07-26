@@ -7,6 +7,8 @@ import 'package:my_qoran/core/domain/usecases/read_quran_usecase.dart';
 import 'package:my_qoran/core/domain/usecases/search_ayah_usecase.dart';
 import 'package:my_qoran/core/domain/usecases/search_surah_usecase.dart';
 import 'package:my_qoran/core/domain/usecases/show_index_usecase.dart';
+import 'package:my_qoran/core/presentation/logic/index/quran_indexing_bloc.dart';
+import 'package:my_qoran/core/presentation/logic/read/read_quran_bloc.dart';
 
 final inject = GetIt.instance;
 
@@ -16,13 +18,10 @@ Future<void> initialiseDependencies() async {
    * Factory: New Instance Everytime, Good for ViewModels.
    */
 
-  //Database Injection:
-  final database =
-      await $FloorQuranDatabase.databaseBuilder('quran.db').build();
-  inject.registerSingleton<QuranDatabase>(database);
+  final QuranDatabase quranDatabase = QuranDatabase.instance;
 
   //LocalDataSource:
-  inject.registerSingleton<LocalDataSource>(LocalDataSource(inject()));
+  inject.registerSingleton<LocalDataSource>(LocalDataSource(quranDatabase));
 
   //Repository:
   inject.registerSingleton<QuranRepository>(QuranRepositoryImpl(inject()));
@@ -32,4 +31,16 @@ Future<void> initialiseDependencies() async {
   inject.registerSingleton<IndexingUseCases>(IndexingUseCases(inject()));
   inject.registerSingleton<SearchAyahUseCase>(SearchAyahUseCase(inject()));
   inject.registerSingleton<SearchSurahUseCase>(SearchSurahUseCase(inject()));
+
+  //Logic
+  inject.registerFactory<QuranIndexingBloc>(
+    () => QuranIndexingBloc(
+      useCase: inject(),
+    ),
+  );
+  inject.registerFactory<ReadQuranBloc>(
+    () => ReadQuranBloc(
+      useCase: inject(),
+    ),
+  );
 }

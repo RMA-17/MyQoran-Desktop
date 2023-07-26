@@ -1,53 +1,262 @@
-import 'package:floor/floor.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/juz_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/page_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/quran_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/search_result_entity.dart';
-import 'package:my_qoran/core/data/data_source/local/entities/surah_entity.dart';
-import 'dart:async';
+part of 'quran_database.dart';
 
-@dao
-abstract class QuranDao {
-  @Query("SELECT * FROM surah")
-  Future<List<SurahView>> showQuranIndexBySurah();
+class QuranDao {
+  final Database _db;
+  const QuranDao(this._db);
 
-  @Query("SELECT * FROM juz")
-  Future<List<JuzView>> showQuranIndexByJuz();
+  Future<List<SurahView>> showQuranIndexBySurah() async {
+    final result = await _db.rawQuery(
+      'SELECT * FROM surah',
+    );
 
-  @Query("SELECT * FROM page")
-  Future<List<PageView>> showQuranIndexByPage();
+    return result
+        .map((json) => SurahView(
+              id: json['id'] as int?,
+              ayahTotal: json['ayah_total'] as int?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              surahNameEN: json['sora_name_en'] as String?,
+              surahNameID: json['sora_name_id'] as String?,
+              surahNumber: json['sora'] as int?,
+              surahDescendText: json['sora_descend_place'] as String?,
+            ))
+        .toList();
+  }
 
-  @Query("SELECT id, sora, sora_name_en FROM quran GROUP BY sora")
-  Future<List<QuranEntity>> getSurahList();
+  Future<List<JuzView>> showQuranIndexByJuz() async {
+    final result = await _db.rawQuery('SELECT * FROM juz');
 
-  @Query("SELECT id, jozz FROM quran GROUP BY jozz")
-  Future<List<QuranEntity>> getJuzList();
+    return result
+        .map((json) => JuzView(
+              ayahNumber: json['aya_no'] as int?,
+              id: json['id'] as int?,
+              juzNumber: json['jozz'] as int?,
+              quranText: json['aya_text'] as String?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNumber: json['sora'] as int?,
+            ))
+        .toList();
+  }
 
-  @Query("SELECT id, page FROM quran GROUP BY page")
-  Future<List<QuranEntity>> getPageList();
+  Future<List<PageView>> showQuranIndexByPage() async {
+    final result = await _db.rawQuery('SELECT * FROM page');
 
-  @Query(
-    "SELECT * FROM search_surah_result WHERE sora_name_emlaey LIKE '%'||:search||'%' OR sora = '%'||:search||'%' GROUP BY sora",
-  )
-  Future<List<SearchSurahResultView>> searchSurah(String search);
+    return result
+        .map((json) => PageView(
+              ayahNumber: json['aya_no'] as int?,
+              id: json['id'] as int?,
+              pageNumber: json['page'] as int?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNumber: json['sora'] as int?,
+            ))
+        .toList();
+  }
 
-  @Query(
-    "SELECT * FROM quran WHERE translation_id LIKE '%'||:search||'%' OR aya_text_emlaey LIKE :search OR translation_en LIKE '%'||:search||'%'",
-  )
-  Future<List<QuranEntity>> searchEntireQuran(String search);
+  Future<List<QuranEntity>> getSurahList() async {
+    final result = await _db.rawQuery(
+      'SELECT id, sora, sora_name_en FROM quran GROUP BY sora',
+    );
 
-  @Query(
-    "SELECT id, sora, aya_no, aya_text, aya_text_emlaey, translation_id, sora_name_ar, sora_name_en, footnotes_id, translation_en, footnotes_en, sora_descend_place FROM quran WHERE sora = :surahNumber",
-  )
-  Future<List<QuranEntity>> readQuranBySurah(int surahNumber);
+    return result
+        .map((json) => QuranEntity(
+              id: json['id'] as int?,
+              surahNumber: json['sora_number'] as int?,
+              juzNumber: json['jozz'] as int?,
+              pageNumber: json['page'] as int?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              ayahNumber: json['aya_no'] as int?,
+              ayahText: json['aya_text'] as String?,
+              ayahSearchText: json['aya_text_emlaey'] as String?,
+              translationTextId: json['translation_id'] as String?,
+              translationTextEn: json['translation_en'] as String?,
+              footnotesTextId: json['footnotes_id'] as String?,
+              surahNameId: json['sora_name_id'] as String?,
+              surahDescendText: json['sora_descend_place'] as String?,
+              surahNameSearchText: json['sora_name_emlaey'] as String?,
+              footnotesTextEn: json['footnotes_en'] as String?,
+            ))
+        .toList();
+  }
 
-  @Query(
-    "SELECT id, sora, jozz, aya_no, aya_text, aya_text_emlaey, translation_id, sora_name_ar, sora_name_en, footnotes_id, translation_en, footnotes_en, sora_descend_place FROM quran WHERE jozz = :juzNumber",
-  )
-  Future<List<QuranEntity>> readQuranByJuz(int juzNumber);
+  Future<List<QuranEntity>> getJuzList() async {
+    final result = await _db.rawQuery(
+      'SELECT id, jozz FROM quran GROUP BY jozz',
+    );
 
-  @Query(
-    "SELECT id, sora, jozz, aya_no, page, aya_text, aya_text_emlaey, translation_id, sora_name_ar, sora_name_en, footnotes_id, translation_en, footnotes_en, sora_descend_place FROM quran WHERE page = :pageNumber",
-  )
-  Future<List<QuranEntity>> readQuranByPage(int pageNumber);
+    return result
+        .map((json) => QuranEntity(
+              id: json['id'] as int?,
+              surahNumber: json['sora_number'] as int?,
+              juzNumber: json['jozz'] as int?,
+              pageNumber: json['page'] as int?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              ayahNumber: json['aya_no'] as int?,
+              ayahText: json['aya_text'] as String?,
+              ayahSearchText: json['aya_text_emlaey'] as String?,
+              translationTextId: json['translation_id'] as String?,
+              translationTextEn: json['translation_en'] as String?,
+              footnotesTextId: json['footnotes_id'] as String?,
+              surahNameId: json['sora_name_id'] as String?,
+              surahDescendText: json['sora_descend_place'] as String?,
+              surahNameSearchText: json['sora_name_emlaey'] as String?,
+              footnotesTextEn: json['footnotes_en'] as String?,
+            ))
+        .toList();
+  }
+
+  Future<List<QuranEntity>> getPageList() async {
+    final result = await _db.rawQuery(
+      'SELECT id, page FROM quran GROUP BY page',
+    );
+
+    return result
+        .map((json) => QuranEntity(
+              id: json['id'] as int?,
+              surahNumber: json['sora_number'] as int?,
+              juzNumber: json['jozz'] as int?,
+              pageNumber: json['page'] as int?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              ayahNumber: json['aya_no'] as int?,
+              ayahText: json['aya_text'] as String?,
+              ayahSearchText: json['aya_text_emlaey'] as String?,
+              translationTextId: json['translation_id'] as String?,
+              translationTextEn: json['translation_en'] as String?,
+              footnotesTextId: json['footnotes_id'] as String?,
+              surahNameId: json['sora_name_id'] as String?,
+              surahDescendText: json['sora_descend_place'] as String?,
+              surahNameSearchText: json['sora_name_emlaey'] as String?,
+              footnotesTextEn: json['footnotes_en'] as String?,
+            ))
+        .toList();
+  }
+
+  Future<List<SearchSurahResultView>> searchSurah(String search) async {
+    final result = await _db.rawQuery(
+      'SELECT * FROM search_surah_result WHERE sora_name_emlaey LIKE \'%\'||?1||\'%\' OR sora = \'%\'||?1||\'%\' GROUP BY sora',
+    );
+
+    return result
+        .map((json) => SearchSurahResultView(
+              id: json['id'] as int?,
+              numberOfAyah: json['ayah_total'] as int?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              surahNameEmlaey: json['sora_name_emlaey'] as String?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNameId: json['sora_name_id'] as String?,
+              surahNumber: json['sora'] as int?,
+              turunSurah: json['sora_descend_place'] as String?,
+            ))
+        .toList();
+  }
+
+  Future<List<QuranEntity>> searchEntireQuran(String search) async {
+    final result = await _db.rawQuery(
+      "SELECT * FROM quran WHERE translation_id LIKE '%'||:search||'%' OR aya_text_emlaey LIKE :search OR translation_en LIKE '%'||:search||'%'",
+    );
+
+    return result
+        .map((json) => QuranEntity(
+              id: json['id'] as int?,
+              surahNumber: json['sora_number'] as int?,
+              juzNumber: json['jozz'] as int?,
+              pageNumber: json['page'] as int?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              ayahNumber: json['aya_no'] as int?,
+              ayahText: json['aya_text'] as String?,
+              ayahSearchText: json['aya_text_emlaey'] as String?,
+              translationTextId: json['translation_id'] as String?,
+              translationTextEn: json['translation_en'] as String?,
+              footnotesTextId: json['footnotes_id'] as String?,
+              surahNameId: json['sora_name_id'] as String?,
+              surahDescendText: json['sora_descend_place'] as String?,
+              surahNameSearchText: json['sora_name_emlaey'] as String?,
+              footnotesTextEn: json['footnotes_en'] as String?,
+            ))
+        .toList();
+  }
+
+  Future<List<QuranEntity>> readQuranBySurah(int surahNumber) async {
+    final result = await _db.rawQuery(
+      "SELECT id, sora, aya_no, aya_text, aya_text_emlaey, translation_id, sora_name_ar, sora_name_en, footnotes_id, translation_en, footnotes_en, sora_descend_place FROM quran WHERE sora = :surahNumber",
+    );
+
+    return result
+        .map((json) => QuranEntity(
+            id: json['id'] as int?,
+            surahNumber: json['sora_number'] as int?,
+            juzNumber: json['jozz'] as int?,
+            pageNumber: json['page'] as int?,
+            surahNameEn: json['sora_name_en'] as String?,
+            surahNameAr: json['sora_name_ar'] as String?,
+            ayahNumber: json['aya_no'] as int?,
+            ayahText: json['aya_text'] as String?,
+            ayahSearchText: json['aya_text_emlaey'] as String?,
+            translationTextId: json['translation_id'] as String?,
+            translationTextEn: json['translation_en'] as String?,
+            footnotesTextId: json['footnotes_id'] as String?,
+            surahNameId: json['sora_name_id'] as String?,
+            surahDescendText: json['sora_descend_place'] as String?,
+            surahNameSearchText: json['sora_name_emlaey'] as String?,
+            footnotesTextEn: json['footnotes_en'] as String?))
+        .toList();
+  }
+
+  Future<List<QuranEntity>> readQuranByJuz(int juzNumber) async {
+    final result = await _db.rawQuery(
+      "SELECT id, sora, jozz, aya_no, aya_text, aya_text_emlaey, translation_id, sora_name_ar, sora_name_en, footnotes_id, translation_en, footnotes_en, sora_descend_place FROM quran WHERE jozz = :juzNumber",
+    );
+
+    return result
+        .map((json) => QuranEntity(
+              id: json['id'] as int?,
+              surahNumber: json['sora_number'] as int?,
+              juzNumber: json['jozz'] as int?,
+              pageNumber: json['page'] as int?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              ayahNumber: json['aya_no'] as int?,
+              ayahText: json['aya_text'] as String?,
+              ayahSearchText: json['aya_text_emlaey'] as String?,
+              translationTextId: json['translation_id'] as String?,
+              translationTextEn: json['translation_en'] as String?,
+              footnotesTextId: json['footnotes_id'] as String?,
+              surahNameId: json['sora_name_id'] as String?,
+              surahDescendText: json['sora_descend_place'] as String?,
+              surahNameSearchText: json['sora_name_emlaey'] as String?,
+              footnotesTextEn: json['footnotes_en'] as String?,
+            ))
+        .toList();
+  }
+
+  Future<List<QuranEntity>> readQuranByPage(int pageNumber) async {
+    final result = await _db.rawQuery(
+      "SELECT id, sora, jozz, aya_no, page, aya_text, aya_text_emlaey, translation_id, sora_name_ar, sora_name_en, footnotes_id, translation_en, footnotes_en, sora_descend_place FROM quran WHERE page = :pageNumber",
+    );
+
+    return result
+        .map((json) => QuranEntity(
+              id: json['id'] as int?,
+              surahNumber: json['sora_number'] as int?,
+              juzNumber: json['jozz'] as int?,
+              pageNumber: json['page'] as int?,
+              surahNameEn: json['sora_name_en'] as String?,
+              surahNameAr: json['sora_name_ar'] as String?,
+              ayahNumber: json['aya_no'] as int?,
+              ayahText: json['aya_text'] as String?,
+              ayahSearchText: json['aya_text_emlaey'] as String?,
+              translationTextId: json['translation_id'] as String?,
+              translationTextEn: json['translation_en'] as String?,
+              footnotesTextId: json['footnotes_id'] as String?,
+              surahNameId: json['sora_name_id'] as String?,
+              surahDescendText: json['sora_descend_place'] as String?,
+              surahNameSearchText: json['sora_name_emlaey'] as String?,
+              footnotesTextEn: json['footnotes_en'] as String?,
+            ))
+        .toList();
+  }
 }

@@ -6,50 +6,51 @@ import 'package:my_qoran/core/data/data_source/local/entities/search_result_enti
 import 'package:my_qoran/core/data/data_source/local/entities/surah_entity.dart';
 
 class LocalDataSource {
-  final QuranDatabase _database;
-  LocalDataSource(this._database);
+  final QuranDatabase _quranDatabase;
+  LocalDataSource(this._quranDatabase);
 
   Future<List<SurahView>> getSurahIndex() async {
-    return _database.quranDao.showQuranIndexBySurah();
+    return QuranDao(await _quranDatabase.database).showQuranIndexBySurah();
   }
 
   Future<List<JuzView>> getJuzIndex() async {
-    return _database.quranDao.showQuranIndexByJuz();
+    return QuranDao(await _quranDatabase.database).showQuranIndexByJuz();
   }
 
   Future<List<PageView>> getPageIndex() async {
-    return _database.quranDao.showQuranIndexByPage();
+    return QuranDao(await _quranDatabase.database).showQuranIndexByPage();
   }
 
   Future<List<QuranEntity>> getSurahList() async {
-    return _database.quranDao.getSurahList();
+    return QuranDao(await _quranDatabase.database).getSurahList();
   }
 
   Future<List<QuranEntity>> getJuzList() async {
-    return _database.quranDao.getJuzList();
+    return QuranDao(await _quranDatabase.database).getJuzList();
   }
 
   Future<List<QuranEntity>> getPageList() async {
-    return _database.quranDao.getPageList();
+    return QuranDao(await _quranDatabase.database).getPageList();
   }
 
   Future<List<SearchSurahResultView>> getSurahSearchResult(String query) async {
-    return _database.quranDao.searchSurah(query);
+    return QuranDao(await _quranDatabase.database).searchSurah(query);
   }
 
-  Future<List<QuranEntity>> getQuranSearchResult(String query) {
-    return _database.quranDao.searchEntireQuran(query);
+  Future<List<QuranEntity>> getQuranSearchResult(String query) async {
+    return QuranDao(await _quranDatabase.database).searchEntireQuran(query);
   }
 
-  Future<List<QuranEntity>> getQuranBySurahText(int surahNumber) {
-    return _database.quranDao.readQuranBySurah(surahNumber);
+  Future<List<QuranEntity>> getQuranBySurahText(int surahNumber) async {
+    return QuranDao(await _quranDatabase.database)
+        .readQuranBySurah(surahNumber);
   }
 
-  Future<List<QuranEntity>> getQuranByJuzText(int juzNumber) {
-    return _database.quranDao.readQuranByJuz(juzNumber);
+  Future<List<QuranEntity>> getQuranByJuzText(int juzNumber) async {
+    return QuranDao(await _quranDatabase.database).readQuranByJuz(juzNumber);
   }
 
-  Future<List<QuranEntity>> getQuranByPageText(int pageNumber) {
-    return _database.quranDao.readQuranByPage(pageNumber);
+  Future<List<QuranEntity>> getQuranByPageText(int pageNumber) async {
+    return QuranDao(await _quranDatabase.database).readQuranByPage(pageNumber);
   }
 }

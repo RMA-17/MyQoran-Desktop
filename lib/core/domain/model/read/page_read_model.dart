@@ -1,4 +1,6 @@
-class PageRead {
+import 'package:my_qoran/core/domain/model/read/read_model.dart';
+
+class PageRead extends ReadEntity {
   final int? id;
   final int? surahNumber;
   final int? juzNumber;
@@ -15,7 +17,7 @@ class PageRead {
   final String? footnotesEn;
   final String? surahDescendPlace;
 
-  const PageRead({
+  PageRead({
     this.id,
     this.surahNumber,
     this.juzNumber,
@@ -32,4 +34,23 @@ class PageRead {
     this.footnotesEn,
     this.surahDescendPlace,
   });
+
+  @override
+  List<Object?> get props => [
+        id,
+        surahNumber,
+        juzNumber,
+        pageNumber,
+        ayahNumber,
+        ayahText,
+        ayahSearchText,
+        translationTextId,
+        translationTextEn,
+        surahNameId,
+        surahNameEn,
+        surahNameAr,
+        footnotesId,
+        footnotesEn,
+        surahDescendPlace,
+      ];
 }

@@ -1,4 +1,6 @@
-class SurahIndex {
+import 'package:my_qoran/core/domain/model/index/indexing_model.dart';
+
+class SurahIndex extends IndexingEntity {
   final int? id;
   final int? ayahTotal;
   final String? surahNameAr;
@@ -16,4 +18,15 @@ class SurahIndex {
     this.surahNumber,
     this.surahDescendText,
   });
+
+  @override
+  List<Object?> get props => [
+        id,
+        ayahTotal,
+        surahNameAr,
+        surahNameEN,
+        surahNameID,
+        surahNumber,
+        surahDescendText,
+      ];
 }
